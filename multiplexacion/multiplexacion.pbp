@@ -1,0 +1,50 @@
+;Contador de 0 a 99 con displays multiplexados
+
+trisb=0
+cmcon=7
+up VAR porta.0
+down VAR porta.1
+manual VAR porta.2
+auto VAR porta.3
+reset VAR porta.7
+numero VAR BYTE
+cont VAR BYTE
+delay VAR BYTE
+delay=50
+
+display:
+    IF up=1 THEN GOSUB sumar
+    IF down=1 THEN GOSUB restar
+    IF reset=1 THEN numero=0
+    IF auto=1 THEN reloj
+    portb=224+numero DIG 0
+    pause delay
+    portb=208+numero DIG 1
+    pause delay
+    GOTO display
+    
+sumar:
+    pause delay
+    numero=numero+1
+    IF numero=100 THEN numero=0
+    RETURN
+    
+restar:
+    PAUSE delay
+    IF numero=0 THEN numero=100
+    numero=numero-1
+    RETURN
+    
+reloj:
+    if auto=1 THEN reloj
+    FOR cont=0 TO 9
+        IF manual=1 THEN display
+        portb=224+numero DIG 0
+        pause delay
+        portb=208+numero DIG 1
+        pause delay
+    NEXT
+    numero=numero+1
+    IF numerO=100 THEN numero=0
+    GOTO reloj
+END

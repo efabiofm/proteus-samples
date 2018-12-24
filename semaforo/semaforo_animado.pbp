@@ -1,0 +1,117 @@
+trisa=0
+trisb=0
+trisc=%10000000
+
+x VAR BYTE
+y VAR BYTE
+tiempo VAR WORD
+num VAR BYTE
+repet VAR BYTE
+delay VAR BYTE
+display VAR porta
+boton VAR portc.7
+
+tiempo=0
+repet=10
+delay=5
+portb=0
+portc=0
+num=9
+
+inicio:
+    portb=%10000001:portc=%1111011:PAUSE delay
+    portb=%10000010:portc=%0001101:PAUSE delay
+    portb=%10000100:portc=%1100000:PAUSE delay
+    portb=%10001000:portc=%0001101:PAUSE delay
+    portb=%10010000:portc=%1111011:PAUSE delay
+    IF boton=0 THEN semaforo
+    GOTO inicio
+    
+semaforo:
+    FOR x=1 TO repet*8 ;on delay
+        portb=%10000001:portc=%1111011:PAUSE delay
+        portb=%10000010:portc=%0001101:PAUSE delay
+        portb=%10000100:portc=%1100000:PAUSE delay
+        portb=%10001000:portc=%0001101:PAUSE delay
+        portb=%10010000:portc=%1111011:PAUSE delay
+    next
+    FOR x=1 TO 2
+        FOR y=1 TO repet ;apaga la luz verde
+            portb=%00001:portc=%1111011:PAUSE delay 
+            portb=%00010:portc=%0001101:PAUSE delay
+            portb=%00100:portc=%1100000:PAUSE delay
+            portb=%01000:portc=%0001101:PAUSE delay
+            portb=%10000:portc=%1111011:PAUSE delay
+        next
+        FOR y=1 TO repet ;enciende la luz verde
+            portb=%10000001:portc=%1111011:PAUSE delay
+            portb=%10000010:portc=%0001101:PAUSE delay
+            portb=%10000100:portc=%1100000:PAUSE delay
+            portb=%10001000:portc=%0001101:PAUSE delay
+            portb=%10010000:portc=%1111011:PAUSE delay
+        next
+    NEXT
+    FOR y=1 TO repet ;apaga la luz verde
+        portb=%00001:portc=%1111011:PAUSE delay
+        portb=%00010:portc=%0001101:PAUSE delay
+        portb=%00100:portc=%1100000:PAUSE delay
+        portb=%01000:portc=%0001101:PAUSE delay
+        portb=%10000:portc=%1111011:PAUSE delay
+    next
+    FOR y=1 TO repet*3 ;enciende la luz amarilla
+        portb=%1000001:portc=%1111011:PAUSE delay
+        portb=%1000010:portc=%0001101:PAUSE delay
+        portb=%1000100:portc=%1100000:PAUSE delay
+        portb=%1001000:portc=%0001101:PAUSE delay
+        portb=%1010000:portc=%1111011:PAUSE delay
+    next
+    display=num
+animacion:
+    FOR x=1 TO repet
+        portb=%100001:portc=%0011110:pause delay
+        portb=%100010:portc=%1101101:PAUSE delay
+        portb=%100100:portc=%1110000:PAUSE delay
+        portb=%101000:portc=%1101101:PAUSE delay
+        portb=%110000:portc=%1101011:PAUSE delay
+        tiempo=tiempo+25:GOSUB contador
+    NEXT
+    FOR x=1 TO repet
+        portb=%100001:portc=%1111101:PAUSE delay
+        portb=%100010:portc=%0001011:PAUSE delay
+        portb=%100100:portc=%1100000:PAUSE delay
+        portb=%101000:portc=%1011011:PAUSE delay
+        portb=%110000:portc=%1010111:PAUSE delay
+        tiempo=tiempo+25:GOSUB contador
+    NEXT
+    FOR x=1 TO repet
+        portb=%100001:portc=%1111111:PAUSE delay
+        portb=%100010:portc=%1010111:PAUSE delay
+        portb=%100100:portc=%0000000:PAUSE delay
+        portb=%101000:portc=%1110111:PAUSE delay
+        portb=%110000:portc=%1111111:PAUSE delay
+        tiempo=tiempo+25:GOSUB contador
+    NEXT
+    FOR x=1 TO repet
+        portb=%100001:portc=%1111101:PAUSE delay
+        portb=%100010:portc=%0001011:PAUSE delay
+        portb=%100100:portc=%1100000:PAUSE delay
+        portb=%101000:portc=%1011011:PAUSE delay
+        portb=%110000:portc=%1010111:PAUSE delay
+        tiempo=tiempo+25:GOSUB contador
+    NEXT
+    GOTO animacion
+    
+contador:
+    IF tiempo=1000 THEN 
+        num=num-1
+        repet=repet-1
+        display=num
+        tiempo=0
+        endif
+    IF num=0 THEN
+        num=9
+        repet=10
+        GOTO inicio
+        endif
+    RETURN    
+END
